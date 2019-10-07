@@ -1,2 +1,2 @@
-# ProtoDeep_nn_edition-Lib_by_Undefined
+# ProtoDeep nn edition Lib by Undefined
 Simple C lib for neural network edition (ProtoDeep part 1)
