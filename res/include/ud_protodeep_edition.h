@@ -39,7 +39,7 @@ typedef struct              uds_dense_params {
 
 typedef struct              uds_conv_params {
     char                    *activation;
-    size_t                  kernel_size;
+    size_t                  *kernel_size;
     size_t                  strides;
 }                           ud_conv_params;
 
@@ -55,10 +55,10 @@ ud_arr                      *ud_pde_stringify_conv(void *p_conv, char *name, ud_
 # define UD_PDE_INT_COND(cond, layer, value)                        #value": ", ud_pde_cond_str(layer->value cond, (char *)ud_matha_itoa(layer->value)->val, #layer, #value, #cond)
 # define UD_PDE_STR_COND(cond, layer, value)                        #value": ", ud_pde_cond_str(layer->value cond, layer->value ? layer->value : "undefined", #layer, #value, #cond)
 # define UD_PDE_INT_ARRAY(layer, value)                             #value": ", ud_pde_int_array_to_str(layer->value)
-# define UD_PDE_INT(layer, value)                                   UD_PDE_INT_COND(&& 1, layer, value)
-# define UD_PDE_STR(layer, value)                                   UD_PDE_STR_COND(&& 1, layer, value)
+# define UD_PDE_INT(layer, value)                                   UD_PDE_INT_COND(|| 1, layer, value)
+# define UD_PDE_STR(layer, value)                                   UD_PDE_STR_COND(|| 1, layer, value)
 
-# define ud_pde_stringify(type, ...)                                ud_stra_vjoin(NULL, ud_pde_stringify_desc(name, layer_grade, type), (char *)ud_stra_vnjoin("; ", 2, __VA_ARGS__)->val, ud_pde_stringify_before_layers(before_layers), "NULL")
+# define ud_pde_stringify(type, ...)                                ud_stra_vjoin(", ", ud_pde_stringify_desc(name, layer_grade, type), (char *)ud_stra_vnjoin("; ", 2, __VA_ARGS__)->val, ud_pde_stringify_before_layers(before_layers), "NULL\n")
 # define ud_pde_stringify_desc(name, layer_grade, layer_type)       ud_pde_stringify_desc_ctr(name, grades[layer_grade], UD_LT_TO_STR(layer_type))
 # define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_stra_vjoin(", ", __VA_ARGS__))
 # define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_stra_vjoin(", ", __VA_ARGS__))

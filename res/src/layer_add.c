@@ -9,7 +9,7 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     static char *last_name = NULL;
     if (!before_layers->len) before_layers = ud_stra_new(last_name);
     ud_arr *csv = f[type](layer, layer_name, layer_grade, before_layers, grades);
-    printf("%s\n", (char *)csv->val);
+    ud_file_write_append(csv_path, csv);
     last_name = layer_name;
     return (layer_name);
 }
