@@ -27,9 +27,9 @@
                                                                     ud_pde_stringify_conv
 
 // 3; Add constructor here
-# define ud_dense(_name, ...)                                       #_name, ({ ud_dense_params _name = { __VA_ARGS__}; &_name; }), UD_LT_DENSE
+# define ud_dense(_name, ...)                                       #_name, ({ ud_dense_params _tmp = { __VA_ARGS__}; &_tmp; }), UD_LT_DENSE
 # define ud_fullco(_name, ...)                                      ud_dense(_name, __VA_ARGS__)
-# define ud_conv(_name, ...)                                        #_name, ({ ud_conv_params _name = {__VA_ARGS__}; &_name; }), UD_LT_CONV
+# define ud_conv(_name, ...)                                        #_name, ({ ud_conv_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_CONV
 
 // 4; Create params structure
 typedef struct              uds_dense_params {
@@ -60,9 +60,9 @@ ud_arr                      *ud_pde_stringify_conv(void *p_conv, char *name, ud_
 
 # define ud_pde_stringify(type, ...)                                ud_stra_vjoin(", ", ud_pde_stringify_desc(name, layer_grade, type), (char *)ud_stra_vnjoin("; ", 2, __VA_ARGS__)->val, ud_pde_stringify_before_layers(before_layers), "NULL\n")
 # define ud_pde_stringify_desc(name, layer_grade, layer_type)       ud_pde_stringify_desc_ctr(name, grades[layer_grade], UD_LT_TO_STR(layer_type))
-# define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_stra_vjoin(", ", __VA_ARGS__))
-# define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_stra_vjoin(", ", __VA_ARGS__))
-# define ud_pde_layer_add_output(csv_path, layer_type, ...)         ud_pde_layer_add_ctr(csv_path, UD_LG_OUTPUT, layer_type, ud_stra_vjoin(", ", __VA_ARGS__))
+# define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_stra_vjoin("; ", __VA_ARGS__))
+# define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_stra_vjoin("; ", __VA_ARGS__))
+# define ud_pde_layer_add_output(csv_path, layer_type, ...)         ud_pde_layer_add_ctr(csv_path, UD_LG_OUTPUT, layer_type, ud_stra_vjoin("; ", __VA_ARGS__))
 
 # define ud_shape(...)                                              ud_ut_array(size_t, UD_ARGS_LEN(size_t, __VA_ARGS__), __VA_ARGS__)
 
