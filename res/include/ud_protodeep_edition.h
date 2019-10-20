@@ -19,17 +19,26 @@
 # define UD_LT_TO_STR(x)                                            _Generic((x), \
                                                                         ud_dense_params*: "dense", \
                                                                         ud_conv_params*: "conv", \
+                                                                        ud_maxpool_params*: "maxpool", \
+                                                                        ud_rnn_params*: "rnn", \
+                                                                        ud_lstm_params*: "lstm", \
                                                                         default: "undefined" \
                                                                     )
 
 // 2; Add params stringify function here
 # define UD_STRINGIFY_FT                                            ud_pde_stringify_dense, \
-                                                                    ud_pde_stringify_conv
+                                                                    ud_pde_stringify_conv, \
+                                                                    ud_pde_stringify_maxpool, \
+                                                                    ud_pde_stringify_rnn, \
+                                                                    ud_pde_stringify_lstm
 
 // 3; Add constructor here
 # define ud_dense(_name, ...)                                       #_name, ({ ud_dense_params _tmp = { __VA_ARGS__}; &_tmp; }), UD_LT_DENSE
 # define ud_fullco(_name, ...)                                      ud_dense(_name, __VA_ARGS__)
 # define ud_conv(_name, ...)                                        #_name, ({ ud_conv_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_CONV
+# define ud_maxpool(_name, ...)                                     #_name, ({ ud_maxpool_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_MAXPOOL
+# define ud_rnn(_name, ...)                                         #_name, ({ ud_rnn_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_LSTM
+# define ud_lstm(_name, ...)                                        #_name, ({ ud_lstm_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_LSTM
 
 // 4; Create params structure
 typedef struct              uds_dense_params {
@@ -43,9 +52,27 @@ typedef struct              uds_conv_params {
     size_t                  strides;
 }                           ud_conv_params;
 
+typedef struct              uds_maxpool_params {
+    size_t                  *pool_size;
+    size_t                  strides;
+}                           ud_maxpool_params;
+
+typedef struct              uds_rnn_params {
+    char                    *activation;
+}                           ud_rnn_params;
+
+typedef struct              uds_lstm_params {
+    char                    *activation;
+    char                    *recurrent_activation;
+    char                    *padding;
+}                           ud_lstm_params;
+
 //5; Add stringify functions
 ud_arr                      *ud_pde_stringify_dense(void *p_dense, char *name, ud_layer_grade layer_grade, ud_arr *before_layers, char *grades[]);
 ud_arr                      *ud_pde_stringify_conv(void *p_conv, char *name, ud_layer_grade layer_grade, ud_arr *before_layers, char *grades[]);
+ud_arr                      *ud_pde_stringify_maxpool(void *p_conv, char *name, ud_layer_grade layer_grade, ud_arr *before_layers, char *grades[]);
+ud_arr                      *ud_pde_stringify_rnn(void *p_conv, char *name, ud_layer_grade layer_grade, ud_arr *before_layers, char *grades[]);
+ud_arr                      *ud_pde_stringify_lstm(void *p_conv, char *name, ud_layer_grade layer_grade, ud_arr *before_layers, char *grades[]);
 
 // Macro
 
@@ -53,7 +80,7 @@ ud_arr                      *ud_pde_stringify_conv(void *p_conv, char *name, ud_
 # define UD_NB_STRINGIFY_FT                                         UD_GET_NB_STRINGIFY_FT(UD_STRINGIFY_FT)
 
 # define UD_PDE_INT_COND(cond, layer, value)                        #value": ", ud_pde_cond_str(layer->value cond, (char *)ud_matha_itoa(layer->value)->val, #layer, #value, #cond)
-# define UD_PDE_STR_COND(cond, layer, value)                        #value": ", ud_pde_cond_str(layer->value cond, layer->value ? layer->value : "undefined", #layer, #value, #cond)
+# define UD_PDE_STR_COND(cond, layer, value)                        #value": ", ud_pde_cond_str(layer->value cond, layer->value ? layer->value : "none", #layer, #value, #cond)
 # define UD_PDE_INT_ARRAY(layer, value)                             #value": ", ud_pde_int_array_to_str(layer->value)
 # define UD_PDE_INT(layer, value)                                   UD_PDE_INT_COND(|| 1, layer, value)
 # define UD_PDE_STR(layer, value)                                   UD_PDE_STR_COND(|| 1, layer, value)
