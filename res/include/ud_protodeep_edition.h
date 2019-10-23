@@ -57,7 +57,7 @@ char                      *ud_pde_stringify_dropout(void *p_dropout, char *name,
 // Macro
 
 
-# define UD_GET_NB_STRINGIFY_FT(...)                                UD_ARGS_LEN(void *, __VA_ARGS__)
+# define UD_GET_NB_STRINGIFY_FT(...)                                ud_ut_args_len(void *, __VA_ARGS__)
 # define UD_NB_STRINGIFY_FT                                         UD_GET_NB_STRINGIFY_FT(UD_STRINGIFY_FT)
 
 # define UD_PDE_INT_COND(cond, layer, value)                        ud_str_vfjoin(": ", ud_str_dup(#value), ud_pde_cond_str(layer->value cond, ud_math_itoa(layer->value), #layer, #value, #cond))
@@ -75,7 +75,7 @@ char                      *ud_pde_stringify_dropout(void *p_dropout, char *name,
 # define ud_pde_layer_add_output(csv_path, layer_type, ...)         ud_pde_layer_add_ctr(csv_path, UD_LG_OUTPUT, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)
 # define ud_pde_layer_free()                                        ud_pde_layer_add_ctr(NULL, 0, NULL, NULL, 0, NULL, true)
 
-# define ud_shape(...)                                              ud_ut_array(size_t, UD_ARGS_LEN(size_t, __VA_ARGS__), __VA_ARGS__)
+# define ud_shape(...)                                              ud_ut_array(size_t, ud_ut_args_len(size_t, __VA_ARGS__), __VA_ARGS__)
 
 # define ud_pde_free()                                              ({ ud_arr_type_free(); ud_pde_layer_free(); })
 
