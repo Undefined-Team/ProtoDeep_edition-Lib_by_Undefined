@@ -23,6 +23,7 @@
                                                                         ud_maxpool_params*: "maxpool", \
                                                                         ud_rnn_params*: "rnn", \
                                                                         ud_lstm_params*: "lstm", \
+                                                                        ud_dropout_params*: "dropout", \
                                                                         default: "undefined" \
                                                                     )
 
@@ -31,66 +32,47 @@
                                                                     ud_pde_stringify_conv, \
                                                                     ud_pde_stringify_maxpool, \
                                                                     ud_pde_stringify_rnn, \
-                                                                    ud_pde_stringify_lstm
+                                                                    ud_pde_stringify_lstm, \
+                                                                    ud_pde_stringify_dropout
 
 // 3; Add constructor here
 # define ud_dense(_name, ...)                                       ud_str_dup(#_name), ({ ud_dense_params _tmp = { __VA_ARGS__}; &_tmp; }), UD_LT_DENSE
 # define ud_fullco(_name, ...)                                      ud_dense(_name, __VA_ARGS__)
 # define ud_conv(_name, ...)                                        ud_str_dup(#_name), ({ ud_conv_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_CONV
 # define ud_maxpool(_name, ...)                                     ud_str_dup(#_name), ({ ud_maxpool_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_MAXPOOL
-# define ud_rnn(_name, ...)                                         ud_str_dup(#_name), ({ ud_rnn_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_LSTM
+# define ud_rnn(_name, ...)                                         ud_str_dup(#_name), ({ ud_rnn_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_RNN
 # define ud_lstm(_name, ...)                                        ud_str_dup(#_name), ({ ud_lstm_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_LSTM
+# define ud_dropout(_name, ...)                                     ud_str_dup(#_name), ({ ud_dropout_params _tmp = {__VA_ARGS__}; &_tmp; }), UD_LT_DROPOUT
 
-// 4; Create params structure
-typedef struct              uds_dense_params {
-    char                    *activation;
-    size_t                  *neurons_shape;
-}                           ud_dense_params;
-
-typedef struct              uds_conv_params {
-    char                    *activation;
-    size_t                  *kernel_size;
-    size_t                  strides;
-}                           ud_conv_params;
-
-typedef struct              uds_maxpool_params {
-    size_t                  *pool_size;
-    size_t                  strides;
-}                           ud_maxpool_params;
-
-typedef struct              uds_rnn_params {
-    char                    *activation;
-}                           ud_rnn_params;
-
-typedef struct              uds_lstm_params {
-    char                    *activation;
-    char                    *recurrent_activation;
-    char                    *padding;
-}                           ud_lstm_params;
-
-//5; Add stringify functions
+//4; Add stringify functions
 char                      *ud_pde_stringify_dense(void *p_dense, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
 char                      *ud_pde_stringify_conv(void *p_conv, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
 char                      *ud_pde_stringify_maxpool(void *p_conv, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
 char                      *ud_pde_stringify_rnn(void *p_conv, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
 char                      *ud_pde_stringify_lstm(void *p_conv, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
+char                      *ud_pde_stringify_dropout(void *p_dropout, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[]);
+
+//5; Add conv params structure in ud_protodeep_core.h
 
 // Macro
+
 
 # define UD_GET_NB_STRINGIFY_FT(...)                                UD_ARGS_LEN(void *, __VA_ARGS__)
 # define UD_NB_STRINGIFY_FT                                         UD_GET_NB_STRINGIFY_FT(UD_STRINGIFY_FT)
 
 # define UD_PDE_INT_COND(cond, layer, value)                        ud_str_vfjoin(": ", ud_str_dup(#value), ud_pde_cond_str(layer->value cond, ud_math_itoa(layer->value), #layer, #value, #cond))
+# define UD_PDE_FLOAT_COND(cond, layer, value)                      ud_str_vfjoin(": ", ud_str_dup(#value), ud_pde_cond_str(layer->value cond, ud_math_ftoa(layer->value), #layer, #value, #cond))
 # define UD_PDE_STR_COND(cond, layer, value)                        ud_str_vfjoin(": ", ud_str_dup(#value), ud_pde_cond_str(layer->value cond, layer->value ? ud_str_dup(layer->value) : ud_str_dup("none"), #layer, #value, #cond))
 # define UD_PDE_INT_ARRAY(layer, value)                             ud_str_vfjoin(": ", ud_str_dup(#value), ud_pde_int_array_to_str(layer->value))
 # define UD_PDE_INT(layer, value)                                   UD_PDE_INT_COND(|| 1, layer, value)
+# define UD_PDE_FLOAT(layer, value)                                 UD_PDE_FLOAT_COND(|| 1, layer, value)
 # define UD_PDE_STR(layer, value)                                   UD_PDE_STR_COND(|| 1, layer, value)
 
 # define ud_pde_stringify(type, ...)                                ud_str_vfjoin(", ", ud_pde_stringify_desc(name, layer_grade, type), ud_str_vfjoin("; ", __VA_ARGS__), ud_pde_stringify_before_layers(before_layers), ud_str_dup("NULL\n"))
 # define ud_pde_stringify_desc(name, layer_grade, layer_type)       ud_pde_stringify_desc_ctr(name, grades[layer_grade], UD_LT_TO_STR(layer_type))
-# define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_ut_sarray(char *, __VA_ARGS__, NULL), false)
-# define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_ut_sarray(char *, __VA_ARGS__, NULL), false)
-# define ud_pde_layer_add_output(csv_path, layer_type, ...)         ud_pde_layer_add_ctr(csv_path, UD_LG_OUTPUT, layer_type, ud_ut_sarray(char *, __VA_ARGS__, NULL), false)
+# define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)
+# define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)
+# define ud_pde_layer_add_output(csv_path, layer_type, ...)         ud_pde_layer_add_ctr(csv_path, UD_LG_OUTPUT, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)
 # define ud_pde_layer_free()                                        ud_pde_layer_add_ctr(NULL, 0, NULL, NULL, 0, NULL, true)
 
 # define ud_shape(...)                                              ud_ut_array(size_t, UD_ARGS_LEN(size_t, __VA_ARGS__), __VA_ARGS__)

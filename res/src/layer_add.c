@@ -37,7 +37,7 @@ void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, ch
     if (ud_file_exists(csv_path))
     {
         char buf[2] = {0};
-        char inputs[] = "aAlLoO";
+        char inputs[] = "oOlLaA";
         int input_opt;
         int len;
         while (1)
@@ -78,9 +78,9 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     static ud_pde_names_list *end = NULL;
     char *grades[] = {"input", "hidden", "output"};
 
-    if (!*before_layers)
+    if (!before_layers || !*before_layers)
     {
-        ud_ut_free(before_layers);
+        if (before_layers) ud_ut_free(before_layers);
         before_layers = end ? ud_ut_array(char *, ud_str_dup(end->name), NULL) : ud_ut_array(char *, ud_str_dup("NULL"), NULL);
     }
     ud_pde_check_names(layer_name, begin);

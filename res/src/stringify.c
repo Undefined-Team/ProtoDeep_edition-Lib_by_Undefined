@@ -88,3 +88,16 @@ char                      *ud_pde_stringify_lstm(void *p_lstm, char *name, ud_la
     );
     return str;
 }
+
+char                      *ud_pde_stringify_dropout(void *p_dropout, char *name, ud_layer_grade layer_grade, char **before_layers, char *grades[])
+{
+    ud_dropout_params     *dropout = (ud_dropout_params *)p_dropout;
+
+    char  *str = ud_pde_stringify(dropout,
+        UD_PDE_STR(dropout, activation),
+        UD_PDE_INT_ARRAY(dropout, neurons_shape),
+        UD_PDE_FLOAT(dropout, dropout_rate)
+    );
+    ud_ut_free(dropout->neurons_shape);
+    return str;
+}
