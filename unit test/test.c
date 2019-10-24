@@ -17,5 +17,4 @@ int main(void)
     ud_pde_layer_add(csv, ud_dropout(dropout, "relu", ud_shape(5, 3), 0.1));
     ud_pde_layer_add(csv, ud_lstm(lstm, "relu", "tanh", "valid"));
     char *output = ud_pde_layer_add_output(csv, ud_dense(output, .neurons_shape = ud_shape(16), .activation = "relu"));
-    ud_pde_free();
 }

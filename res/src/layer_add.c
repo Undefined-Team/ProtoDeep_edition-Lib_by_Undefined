@@ -1,5 +1,7 @@
 #include "ud_protodeep_edition.h"
 
+void __attribute__ ((destructor))  ud_pde_dtor() { ud_pde_free(); }
+
 typedef struct                  uds_pde_names_list {
     void                        (*fp_free)(void *val);
     struct uds_pde_names_list   *next;
