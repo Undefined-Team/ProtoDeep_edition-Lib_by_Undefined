@@ -34,7 +34,7 @@ void    ud_pde_names_list_free(void *val)
     ud_ut_free(to_free);
 }
 
-void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, char *name, void (*fp_free)(void *val))
+void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, char *name, void (*fp_free)(void *val), char *csv)
 {
     if (ud_file_exists(csv_path))
     {
@@ -55,7 +55,9 @@ void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, ch
             ud_file_clear(csv_path);
         else if (input_opt < 4)
         {
-            ud_pde_free();
+            ud_ut_free(list);
+            ud_ut_free(name);
+            ud_ut_free(csv);
             exit(EXIT_SUCCESS);
         }
     }
@@ -67,9 +69,9 @@ void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, ch
 char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *layer_name, void *layer, ud_layer_type type, char **before_layers, ud_bool free)
 {
     static ud_pde_names_list *begin = NULL;
-    if (free && begin)
+    if (free)
     {
-        ud_list_free(begin);
+        if (begin) ud_list_free(ud_pde_names_list, begin);
         return NULL;
     }
     if (!csv_path) ud_ut_error("No csv file to save the network provided.");
@@ -87,11 +89,10 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     }
     ud_pde_check_names(layer_name, begin);
     char *csv = f[type](layer, layer_name, layer_grade, before_layers, grades);
-    ud_arr *csv_a = ud_stra_new(csv);
-    if ((!begin && !(begin = ud_list_finit(ud_pde_names_list, ud_pde_names_list_init_begin, csv_path, layer_name, &ud_pde_names_list_free)))
+    if ((!begin && !(begin = ud_list_finit(ud_pde_names_list, ud_pde_names_list_init_begin, csv_path, layer_name, &ud_pde_names_list_free, csv)))
     || (end && !(end = ud_list_push(end, name = layer_name))) || (!end && !(end = begin)))
         ud_ut_error("Error while storing layer with name %s.", layer_name);
-    ud_file_write_append(csv_path, csv_a);
-    ud_arr_free(csv_a);
+    ud_file_write_append(csv_path, csv);
+    ud_ut_free(csv);
     return (layer_name);
 }
