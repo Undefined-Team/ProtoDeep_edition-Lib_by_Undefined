@@ -77,8 +77,6 @@ char                      *ud_pde_stringify_dropout(void *p_dropout, char *name,
 
 # define ud_shape(...)                                              ud_ut_array(size_t, ud_ut_args_len(size_t, __VA_ARGS__), __VA_ARGS__)
 
-# define ud_pde_free()                                              ({ ud_arr_type_free(); ud_pde_layer_free(); })
-
 // Structures
 
 // Prototypes
