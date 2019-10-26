@@ -67,9 +67,7 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     static ud_pde_names_list *begin = NULL;
     if (free)
     {
-        printf("ok\n");
         if (begin) ud_list_free(ud_pde_names_list, begin);
-        printf("freed\n");
         return NULL;
     }
     if (!csv_path) ud_ut_error("No csv file to save the network provided.");
