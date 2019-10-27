@@ -2,7 +2,6 @@
 
 void __attribute__ ((destructor))  ud_pde_layers_dtor() { ud_pde_layer_free(); }
 
-ud_list_struct(ud_pde_names_list, char *name);
 ud_list_define(ud_pde_names_list, ud_list_ud_pde_names_list_free, NULL);
 
 void    ud_list_ud_pde_names_list_free(void *val)
@@ -31,9 +30,17 @@ char    *ud_pde_auto_name(char *layer_name)
     return ret;
 }
 
-void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, char *name, char *csv)
+void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, char *name, char *csv, ud_bool allower)
 {
-    if (ud_file_exists(csv_path))
+    static ud_bool overwrite = false;
+    if (allower)
+    {
+        overwrite = true;
+        return;
+    }
+    else if (overwrite)
+        ud_file_clear(csv_path);
+    if (!overwrite && ud_file_exists(csv_path))
     {
         char buf[2] = {0};
         char inputs[] = "oOlLaA";
@@ -41,7 +48,7 @@ void    ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, ch
         int len;
         while (1)
         {
-            printf("> File %s already exists, what do you want to do ? [o]verwrite [a]ppend [l]eave\n", csv_path);
+            printf("> File %s already exists, what do you want to do ? [o]verwrite [a]ppend [l]eave\n(you can add ud_pde_allow_overwrite before your main function to disable this warning)\n", csv_path);
             len = read(STDIN_FILENO, buf, 1);
             if (len < 0) ud_ut_error("Error while reading input on stdin.");
             if ((input_opt = ud_str_chr(inputs, buf[0])) > -1) break;
@@ -85,7 +92,7 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     }
     ud_pde_check_names(layer_name, begin);
     char *csv = f[type](layer, layer_name, layer_grade, before_layers, grades);
-    if ((!begin && !(begin = ud_list_finit(ud_pde_names_list, ud_pde_names_list_init_begin, csv_path, layer_name, csv)))
+    if ((!begin && !(begin = ud_list_finit(ud_pde_names_list, ud_pde_names_list_init_begin, csv_path, layer_name, csv, false)))
     || (end && !(end = ud_list_push(end, name = layer_name))) || (!end && !(end = begin)))
         ud_ut_error("Error while storing layer with name %s.", layer_name);
     ud_file_write_append(csv_path, csv);

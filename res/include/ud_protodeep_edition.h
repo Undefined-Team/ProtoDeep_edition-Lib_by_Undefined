@@ -77,10 +77,14 @@ char                      *ud_pde_stringify_dropout(void *p_dropout, char *name,
 
 # define ud_shape(...)                                              ud_ut_array(size_t, ud_ut_args_len(size_t, __VA_ARGS__), __VA_ARGS__)
 
+# define ud_pde_allow_overwrite                                     void __attribute__ ((constructor))  ud_pde_allow_overwrite() { ud_pde_names_list_init_begin(NULL, NULL, NULL, NULL, true); }
+
 // Structures
+ud_list_struct(ud_pde_names_list, char *name);
 
 // Prototypes
 char                        *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *layer_name, void *layer, ud_layer_type type, char **before_layers, ud_bool free);
+void                        ud_pde_names_list_init_begin(ud_pde_names_list *list, char *csv_path, char *name, char *csv, ud_bool allower);
 char                        *ud_pde_stringify_desc_ctr(char *name, char *grade, char *layer_type);
 char                        *ud_pde_stringify_before_layers(char **before_layers);
 char                        *ud_pde_cond_str(int cond, char *str, char *name, char *value, char *cond_str);
