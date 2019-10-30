@@ -68,7 +68,7 @@ char                      *ud_pde_stringify_dropout(void *p_dropout, char *name,
 # define UD_PDE_FLOAT(layer, value)                                 UD_PDE_FLOAT_COND(|| 1, layer, value)
 # define UD_PDE_STR(layer, value)                                   UD_PDE_STR_COND(|| 1, layer, value)
 
-# define ud_pde_stringify(type, ...)                                ud_str_vfjoin(", ", ud_pde_stringify_desc(name, layer_grade, type), ud_str_vfjoin("; ", __VA_ARGS__), ud_pde_stringify_before_layers(before_layers), ud_str_dup("NULL\n"))
+# define ud_pde_stringify(type, ...)                                ud_str_vfjoin(", ", ud_pde_stringify_desc(name, layer_grade, type), ud_str_vfjoin("; ", __VA_ARGS__), ud_pde_stringify_before_layers(before_layers), ud_str_dup("\n"))
 # define ud_pde_stringify_desc(name, layer_grade, layer_type)       ud_pde_stringify_desc_ctr(name, grades[layer_grade], UD_LT_TO_STR(layer_type))
 # define ud_pde_layer_add(csv_path, layer_type, ...)                ud_pde_layer_add_ctr(csv_path, UD_LG_HIDDEN, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)
 # define ud_pde_layer_add_input(csv_path, layer_type, ...)          ud_pde_layer_add_ctr(csv_path, UD_LG_INPUT, layer_type, ud_ut_sarray_null(char *, __VA_ARGS__), false)

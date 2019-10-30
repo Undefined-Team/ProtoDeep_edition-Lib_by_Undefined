@@ -24,9 +24,7 @@ char                        *ud_pde_stringify_desc_ctr(char *name, char *grade, 
 char                        *ud_pde_stringify_before_layers(char **before_layers)
 {
     char *ret = ud_str_vrjoin(before_layers, "; ");
-    for (ud_ut_count i = 0; before_layers[i]; ++i)
-        ud_ut_free(before_layers[i]);
-    ud_ut_free(before_layers);
+    ud_ptr_free(before_layers, 1);
     return ret;
 }
 

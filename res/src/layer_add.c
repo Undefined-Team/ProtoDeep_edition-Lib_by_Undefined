@@ -88,7 +88,7 @@ char    *ud_pde_layer_add_ctr(char *csv_path, ud_layer_grade layer_grade, char *
     if (!before_layers || !*before_layers)
     {
         if (before_layers) ud_ut_free(before_layers);
-        before_layers = end ? ud_ut_array(char *, ud_str_dup(end->name), NULL) : ud_ut_array(char *, ud_str_dup("NULL"), NULL);
+        before_layers = end ? ud_ut_array(char *, ud_str_dup(end->name), NULL) : ud_ut_array(char *, ud_str_dup(""), NULL);
     }
     ud_pde_check_names(layer_name, begin);
     char *csv = f[type](layer, layer_name, layer_grade, before_layers, grades);
